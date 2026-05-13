@@ -59,58 +59,7 @@ stateDiagram-v2
 2. **실시간 위치 갱신**: 차량이 계속 위치를 보내고, 매칭된 승객에게 5초 이내로 전달하기
 
 ### 전체 아키텍처 구성
-
-```mermaid
-graph TB
-    subgraph Clients
-        TAXI["🚗 Autonomous Taxi<br/><i>WebSocket (3s/10s)</i>"]
-        PAX["📱 Passenger App<br/><i>SSE (receive only)</i>"]
-    end
-
-    GW["API Gateway"]
-
-    subgraph Core Services
-        LOC["Location Service<br/>위치 수신 · ETA 패스스루"]
-        MATCH["Matching Service<br/>GEORADIUS · ZREM 배차"]
-        RIDE["Ride Service<br/>상태 전이 · 이상 상황 처리"]
-    end
-
-    subgraph Messaging
-        PUBSUB["Redis Pub/Sub<br/>channel: taxi:{id}:location"]
-    end
-
-    subgraph Data Layer
-        REDIS["Redis<br/>GEO SET: idle / dispatched / occupied<br/>HASH: taxi status<br/>Sentinel (Primary + 2 Replica)"]
-        DB["Ride DB (PostgreSQL)<br/>ride state · history"]
-    end
-
-    subgraph External Systems
-        MAP["Map API<br/><i>ETA 폴백 전용</i>"]
-        AUTH["Auth Service"]
-        PAY["Payment Service"]
-    end
-
-    TAXI -- "location, status, ETA" --> GW
-    PAX -- "ride request / cancel" --> GW
-
-    GW --> LOC
-    GW --> MATCH
-    GW --> RIDE
-
-    LOC -- "GEOADD 위치 갱신" --> REDIS
-    LOC -- "publish taxi:{id}:location" --> PUBSUB
-    PUBSUB -- "subscribe → SSE push" --> PAX
-
-    MATCH -- "GEORADIUS + ZREM" --> REDIS
-    MATCH -- "매칭 결과" --> RIDE
-
-    RIDE -- "ride state CRUD" --> DB
-    RIDE -- "풀 전이 (Lua: ZREM+GEOADD)" --> REDIS
-
-    LOC -. "폴백 시에만" .-> MAP
-    GW --> AUTH
-    RIDE --> PAY
-```
+![](arch.png)
 
 **데이터 흐름 요약**:
 - 차량 → WebSocket → Location Service → Redis GEO 갱신 + Pub/Sub publish
