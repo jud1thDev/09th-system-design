@@ -95,6 +95,8 @@ YunTaxi는 단일 대도시권에서 운영되는 실시간 위치 기반 택시
 또한 외부 지도 시스템 호출은 여러 서비스가 직접 수행하지 않고, `Route/ETA Service`를 통해 격리한다. 이를 통해 지도 API 호출량을 제어하고, 캐싱과 장애 대응을 한 곳에서 처리할 수 있다.
 
 ### 개략적 아키텍처
+<img width="1061" height="492" alt="week2 개략적 다이어그램 drawio" src="https://github.com/user-attachments/assets/ab04512b-7ba0-4a25-bd4b-105f80e72ec1" />
+
 
 본 아키텍처는 승객 앱과 기사 앱의 요청을 API Gateway에서 받아 내부 서비스로 라우팅한다.
 
@@ -245,6 +247,8 @@ Ride Service → Kafka → Notification Service
 ### 상세 설계 다이어그램
 
 > 아래 다이어그램은 기사 위치 저장, 주변 기사 검색, 위치 보고 끊김 감지, 이벤트 기반 후속 처리 흐름을 나타낸다.
+
+<img width="1621" height="451" alt="week2 상세 기사위치 drawio" src="https://github.com/user-attachments/assets/086208aa-088d-44bf-8918-0bdc03ba648d" />
 
 
 ```text
