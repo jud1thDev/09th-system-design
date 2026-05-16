@@ -21,6 +21,15 @@
       <sub>스터디 리더</sub>
     </td>
     <td align="center">
+      <a href="https://github.com/Oilwoo">
+        <img src="https://avatars.githubusercontent.com/u/53050413?v=4" width="100px;" alt="오일우"/>
+        <br />
+        <sub><b>오일우</b></sub>
+      </a>
+      <br />
+      <sub>스터디 리더</sub>
+    </td>
+    <td align="center">
       <a href="https://github.com/back1ash">
         <img src="https://avatars.githubusercontent.com/u/53644611?v=4" width="100px;" alt="이해준"/>
         <br />
