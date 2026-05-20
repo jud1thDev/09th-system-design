@@ -218,4 +218,5 @@ Linux 관련 취약점의 원리와 관련 내부 개념을 분석 보고서로 
 
 참고 자료:
 - AI Agent 개발 완전 가이드 2025: Tool Calling, ReAct, Multi-Agent, MCP까지
-- https://www.researchgate.net/publication/404713002_CyBiasBench_Benchmarking_Bias_in_LLM_Agents_for_Cyber-Attack_Scenarios
+- https://arxiv.org/abs/2605.07830
+
