@@ -261,6 +261,54 @@ Worker가 죽으면:
 
 본 시스템은 **사용자 명령 → 응답 스트리밍이 거의 단방향**이므로 SSE를 기본으로 채택. 사용자의 추가 액션(취소·승인)은 별도 REST 엔드포인트로 처리하면 충분하다. ChatGPT, Claude, Anthropic SDK 모두 SSE를 메인 스트리밍 채널로 사용하는 것도 같은 이유.
 
+#### "추론 중 추가 입력"이 들어오면 양방향이 필요한가?
+
+흔한 의문 — 추론이 진행되는 도중 사용자가 추가 질문·답변을 보낼 수 있다면, 결국 양방향 통신이 필요한 것 아닌가? 결론부터 말하면 **애플리케이션 의미론은 양방향이지만, 전송 프로토콜은 단방향 채널 2개로 충분**하다.
+
+| 층위 | 의미 | 본 시나리오 |
+|---|---|---|
+| 애플리케이션 의미론 | 정보가 양쪽으로 흐름 | ✅ 양방향 (Agent가 묻고, 사용자가 답함) |
+| 전송 프로토콜 | 단일 연결로 동시 양방향 프레임 | ❌ 불필요 |
+
+추론 중 사용자가 끼어드는 케이스는 크게 세 가지다.
+
+1. **중단(Stop/Cancel)** — 응답 도중 멈춤
+2. **새 질문으로 교체** — 진행 중인 응답을 버리고 새 질문 시작 (ChatGPT/Claude 방식)
+3. **Agent → 사용자 되묻기** — Agent가 모호한 부분을 묻고, 사용자가 답하면 loop 재개
+
+세 케이스 모두 다음 패턴으로 처리된다 — 본 문서 3-6의 `requires_confirm` 흐름과 동일하다.
+
+```
+[Worker]                                          [Client]
+  Agent loop 실행 중...
+  └─ LLM이 "사용자에게 물어봐야 함" 판단
+  └─ Task 상태: running → paused_awaiting_user
+  └─ event 발행: "question" ───── SSE ──────────▶ UI에 입력창 노출
+  [Worker는 paused. DB의 answer 컬럼을 기다림]
+                                                  사용자가 텍스트 입력
+                                ◀─ HTTP POST ─── /tasks/{id}/answer
+  └─ DB에 answer 기록, Worker 깨움 (notify)
+  └─ Task 상태: paused → running, loop 재개
+```
+
+핵심은 **SSE(다운스트림) + 별도 HTTP POST(업스트림)** 의 2채널 구성이다. Worker는 paused/running 상태 전이로 두 채널을 묶는다.
+
+- `POST /tasks/{id}/cancel` — 진행 중 작업 취소
+- `POST /tasks/{id}/confirm` — `requires_confirm` Tool 승인 (yes/no)
+- `POST /tasks/{id}/answer` — Agent의 되묻기에 대한 자유 텍스트 답변
+- `POST /tasks/{id}/messages` — 새 메시지로 대화 이어가기
+
+**왜 이 정도로 충분한가** — 사용자가 답을 입력하는 시간은 수 초~수십 초(사람 사고 시간)인데, HTTP POST의 RTT는 수십 ms다. WebSocket으로 줄일 수 있는 지연이 사람의 타이핑 시간에 묻혀서 UX 차이가 없다. 반대로 POST는 인증·멱등성·재시도·rate limit 등 HTTP의 기존 자산을 그대로 쓸 수 있다.
+
+**WebSocket이 정말 필요한 경우**는 따로 있다.
+
+- 사용자의 매 키스트로크·커서 위치를 실시간으로 서버가 봐야 할 때 (라이브 페어 프로그래밍)
+- 음성 입력을 chunk 단위로 흘려보내야 할 때 (STT)
+- 수십 ms 단위 round-trip이 UX에 결정적인 협업 화이트보드·게임
+- 바이너리 프로토콜이 필요할 때 (SSE는 UTF-8 텍스트 전용)
+
+본 설계의 사용자 입력은 이 중 어디에도 해당하지 않으므로, SSE + REST 조합을 유지한다.
+
 #### 토큰 스트리밍 vs 작업 이벤트 스트리밍
 
 같은 SSE 채널로 흘려보내되 **이벤트 타입으로 구분**한다.
