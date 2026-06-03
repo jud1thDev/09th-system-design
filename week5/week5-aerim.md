@@ -65,6 +65,8 @@ flowchart LR
     OBJ -.과거 재처리.-> SP
 ```
 
+![개략 아키텍처](./images/week5-aerim-images/week5-overview-images.jpg)
+
 ### 상세 아키텍처 (AWS 매니지드 구체화)
 
 위 개략 구조를 AWS 매니지드 서비스로 1:1 매핑한다.
@@ -95,7 +97,7 @@ flowchart LR
     K -.offset 재처리.-> F
     S3 -.과거 재처리.-> F
 ```
-
+   ![상세 아키텍처](./images/week5-aerim-images/week5-detail-images.jpg)
 ---
 
 ## 3. 상세 설계 — 실시간 스트림 처리 및 이상 탐지 파이프라인 (3-2)
