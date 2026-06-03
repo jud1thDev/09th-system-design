@@ -1,0 +1,145 @@
+<mxfile host="app.diagrams.net" agent="Codex">
+  <diagram id="week4-ilwoo-recommendation-system" name="Commerce Recommendation System">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1;align=left;verticalAlign=middle;" value="장바구니 전환율을 높이는 커머스 추천 지면 시스템 설계" vertex="1">
+          <mxGeometry height="40" width="760" x="40" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="hot_path_area" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#d0d7de;dashed=1;fontSize=16;fontStyle=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;" value="추천 API Hot Path - p95 200ms 이하 목표" vertex="1">
+          <mxGeometry height="360" width="1700" x="40" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="async_path_area" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#d0d7de;dashed=1;fontSize=16;fontStyle=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;" value="이벤트 수집 및 추천 후보 생성 Path - 비동기 처리" vertex="1">
+          <mxGeometry height="430" width="1700" x="40" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="client" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;" value="Client&#xa;Web / App" vertex="1">
+          <mxGeometry height="80" width="170" x="70" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="recommendation_api" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;" value="Recommendation API&#xa;요청 검증 / 라우팅" vertex="1">
+          <mxGeometry height="80" width="180" x="290" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="identity_resolver" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;" value="Identity Resolver&#xa;user_id / anonymous_id" vertex="1">
+          <mxGeometry height="80" width="180" x="520" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="serving_service" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;" value="Recommendation&#xa;Serving Service&#xa;랭킹 / 중복 제거" vertex="1">
+          <mxGeometry height="90" width="220" x="750" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="recommendation_cache" parent="1" style="shape=cylinder3d;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;" value="Redis Recommendation Cache&#xa;user별 Top-N 후보" vertex="1">
+          <mxGeometry height="90" width="210" x="1030" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="product_snapshot_cache" parent="1" style="shape=cylinder3d;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;" value="Product Snapshot Cache&#xa;상품명 / 가격 / 이미지" vertex="1">
+          <mxGeometry height="90" width="210" x="1030" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="response" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;" value="2x5 추천 응답&#xa;상품 10개" vertex="1">
+          <mxGeometry height="80" width="190" x="1310" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="fallback_provider" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;" value="Fallback Provider&#xa;최근 본 카테고리 / 세그먼트 인기 / 전체 인기" vertex="1">
+          <mxGeometry height="90" width="220" x="750" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="identity_store" parent="1" style="shape=cylinder3d;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;" value="Identity Mapping Store&#xa;user_id - anonymous_id" vertex="1">
+          <mxGeometry height="90" width="190" x="515" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="product_system" parent="1" style="shape=cloud;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14;" value="Product System&#xa;상품 / 가격 / 이미지 변경" vertex="1">
+          <mxGeometry height="80" width="220" x="1310" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="event_collector" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=14;" value="Event Collector&#xa;impression / click / add_to_cart" vertex="1">
+          <mxGeometry height="90" width="200" x="290" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="kafka" parent="1" style="shape=cylinder3d;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=14;" value="Kafka&#xa;event stream" vertex="1">
+          <mxGeometry height="80" width="160" x="550" y="615" as="geometry" />
+        </mxCell>
+        <mxCell id="stream_processor" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=14;" value="Stream Processor&#xa;중복 제거 / 세션 연결 / 집계" vertex="1">
+          <mxGeometry height="90" width="210" x="780" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="event_log" parent="1" style="shape=cylinder3d;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;" value="Event Log / Data Lake&#xa;원본 이벤트 저장" vertex="1">
+          <mxGeometry height="90" width="210" x="1060" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="feature_store" parent="1" style="shape=cylinder3d;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;" value="Feature Store&#xa;최근 행동 / 집계 피처" vertex="1">
+          <mxGeometry height="90" width="210" x="1060" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="clickhouse" parent="1" style="shape=cylinder3d;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14;" value="ClickHouse&#xa;성과 분석 / 리포팅&#xa;API hot path 제외" vertex="1">
+          <mxGeometry height="100" width="210" x="1060" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="candidate_generator" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;" value="Candidate Generator&#xa;개인화 / 카테고리 / 인기 후보 생성" vertex="1">
+          <mxGeometry height="90" width="230" x="1330" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="candidate_store" parent="1" style="shape=cylinder3d;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;" value="Candidate Store / Redis&#xa;user / segment Top-N" vertex="1">
+          <mxGeometry height="90" width="190" x="1600" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="tracking_key_note" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#ffffff;strokeColor=#666666;fontSize=13;" value="추적 키&#xa;recommendation_request_id&#xa;surface_id / product_id / rank&#xa;event_id로 중복 제거" vertex="1">
+          <mxGeometry height="120" width="230" x="70" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_client_api" edge="1" parent="1" source="client" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;" target="recommendation_api" value="추천 요청">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_api_identity" edge="1" parent="1" source="recommendation_api" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;" target="identity_resolver" value="식별 정보 전달">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_identity_serving" edge="1" parent="1" source="identity_resolver" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;" target="serving_service" value="resolved_user_key">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_identity_store" edge="1" parent="1" source="identity_resolver" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;dashed=1;" target="identity_store" value="로그인 매핑 조회">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_serving_rec_cache" edge="1" parent="1" source="serving_service" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;" target="recommendation_cache" value="Top-N 후보 조회">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_serving_product_cache" edge="1" parent="1" source="serving_service" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;" target="product_snapshot_cache" value="상품 스냅샷 조회">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_serving_fallback" edge="1" parent="1" source="serving_service" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;dashed=1;strokeColor=#b85450;" target="fallback_provider" value="miss / 장애">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_fallback_serving" edge="1" parent="1" source="fallback_provider" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;dashed=1;strokeColor=#b85450;" target="serving_service" value="10개 채우기">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_product_system_cache" edge="1" parent="1" source="product_system" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;" target="product_snapshot_cache" value="5분 이내 갱신">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_serving_response" edge="1" parent="1" source="serving_service" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;" target="response" value="rank + 상품 정보">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_response_client" edge="1" parent="1" source="response" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;" target="client" value="2x5 렌더링">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_client_event" edge="1" parent="1" source="client" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;" target="event_collector" value="행동 이벤트">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_event_kafka" edge="1" parent="1" source="event_collector" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;" target="kafka" value="event_id 포함">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_kafka_processor" edge="1" parent="1" source="kafka" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;" target="stream_processor" value="consume">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_event_identity_store" edge="1" parent="1" source="event_collector" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;dashed=1;" target="identity_store" value="login event 매핑">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_processor_event_log" edge="1" parent="1" source="stream_processor" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;" target="event_log" value="원본 적재">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_processor_feature" edge="1" parent="1" source="stream_processor" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;" target="feature_store" value="준실시간 피처 갱신">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_processor_clickhouse" edge="1" parent="1" source="stream_processor" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;" target="clickhouse" value="CTA 집계">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_eventlog_generator" edge="1" parent="1" source="event_log" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;" target="candidate_generator" value="배치 입력">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_feature_generator" edge="1" parent="1" source="feature_store" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;" target="candidate_generator" value="최근 행동 반영">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_generator_store" edge="1" parent="1" source="candidate_generator" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;" target="candidate_store" value="Top-N 저장">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_store_rec_cache" edge="1" parent="1" source="candidate_store" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;" target="recommendation_cache" value="serve cache warm-up">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_store_fallback" edge="1" parent="1" source="candidate_store" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeWidth=2;dashed=1;strokeColor=#b85450;" target="fallback_provider" value="fallback 후보">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

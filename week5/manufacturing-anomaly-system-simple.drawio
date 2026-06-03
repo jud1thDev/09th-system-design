@@ -1,0 +1,178 @@
+<mxfile host="app.diagrams.net" agent="Codex">
+  <diagram id="manufacturing-anomaly-system-simple" name="Manufacturing Anomaly System Simple">
+    <mxGraphModel dx="1712" dy="919" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1080" math="0" shadow="0" adaptiveColors="auto">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontSize=22;fontStyle=1;align=left;verticalAlign=middle;" value="제조 설비 이벤트 수집 및 이상 탐지 시스템" vertex="1">
+          <mxGeometry height="40" width="980" x="40" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontSize=13;fontColor=#555555;align=left;verticalAlign=middle;" value="실선: 실시간 이상 탐지 흐름, 점선: 원본 보관 / 사후 품질 분석 흐름" vertex="1">
+          <mxGeometry height="30" width="900" x="40" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="actors" parent="1" style="swimlane;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;html=1;" value="제조 현장" vertex="1">
+          <mxGeometry height="750" width="240" x="40" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="equipment" parent="actors" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;" value="&lt;b&gt;증착 장비&lt;/b&gt;&lt;br&gt;센서 / 알람" vertex="1">
+          <mxGeometry height="80" width="150" x="45" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="engineer" parent="actors" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;" value="&lt;b&gt;공정 엔지니어&lt;/b&gt;&lt;br&gt;대시보드 / 알림 확인" vertex="1">
+          <mxGeometry height="85" width="150" x="45" y="555" as="geometry" />
+        </mxCell>
+        <mxCell id="system" parent="1" style="swimlane;startSize=34;fillColor=#e8f4f8;strokeColor=#6c8ebf;fontStyle=1;html=1;" value="이상 탐지 플랫폼&lt;br&gt;System Boundary" vertex="1">
+          <mxGeometry height="750" width="1280" x="320" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="collector" parent="system" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;b&gt;수집기&lt;/b&gt;&lt;br&gt;장비 프로토콜 수신&lt;br&gt;정규화 / 로컬 버퍼" vertex="1">
+          <mxGeometry height="90" width="190" x="40" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="kafka" parent="system" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#ffe6cc;strokeColor=#d79b00;" value="&lt;b&gt;Kafka&lt;/b&gt;&lt;div&gt;토픽 별로 분류 수평적 확장 가능&lt;/div&gt;" vertex="1">
+          <mxGeometry height="105" width="210" x="300" y="118" as="geometry" />
+        </mxCell>
+        <mxCell id="flink_cluster" parent="system" style="swimlane;startSize=28;fillColor=#f6ffed;strokeColor=#82b366;fontStyle=1;html=1;" value="Flink 실시간 처리 클러스터" vertex="1">
+          <mxGeometry height="255" width="360" x="585" y="75" as="geometry" />
+        </mxCell>
+        <mxCell id="flink_worker_1" parent="flink_cluster" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;b&gt;작업자 1&lt;/b&gt;&lt;br&gt;토픽 별 처리" vertex="1">
+          <mxGeometry height="65" width="135" x="30" y="55" as="geometry" />
+        </mxCell>
+        <mxCell id="flink_worker_2" parent="flink_cluster" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;b&gt;작업자 2&lt;/b&gt;&lt;br&gt;토픽 별 처리" vertex="1">
+          <mxGeometry height="65" width="135" x="190" y="55" as="geometry" />
+        </mxCell>
+        <mxCell id="flink_more" parent="flink_cluster" style="text;html=1;strokeColor=none;fillColor=none;fontSize=22;fontStyle=1;align=center;verticalAlign=middle;" value="..." vertex="1">
+          <mxGeometry height="30" width="45" x="155" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="flink_logic" parent="flink_cluster" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;b&gt;이상 탐지 로직&lt;/b&gt;&lt;br&gt;이벤트 시간 기준 윈도우&lt;br&gt;임계치 / 평균 / 표준편차" vertex="1">
+          <mxGeometry height="75" width="235" x="65" y="158" as="geometry" />
+        </mxCell>
+        <mxCell id="anomaly_topic" parent="system" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#ffe6cc;strokeColor=#d79b00;" value="&lt;b&gt;Kafka&lt;br&gt;&lt;/b&gt;이상 이벤트" vertex="1">
+          <mxGeometry height="95" width="220" x="1010" y="238" as="geometry" />
+        </mxCell>
+        <mxCell id="timeseries_db" parent="system" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;b&gt;ClickHouse&lt;/b&gt;&lt;br&gt;최근 센서 그래프&lt;br&gt;집계 데이터" vertex="1">
+          <mxGeometry height="100" width="210" x="560" y="455" as="geometry" />
+        </mxCell>
+        <mxCell id="anomaly_db" parent="system" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;b&gt;이상 이벤트 저장소&lt;/b&gt;&lt;br&gt;이상 목록 검색&lt;br&gt;상태 / 심각도 관리" vertex="1">
+          <mxGeometry height="100" width="210" x="815" y="455" as="geometry" />
+        </mxCell>
+        <mxCell id="data_lake" parent="system" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;b&gt;원본 데이터 보관소&lt;/b&gt;&lt;br&gt;MinIO + Parquet&lt;br&gt;사후 품질 분석" vertex="1">
+          <mxGeometry height="100" width="210" x="305" y="455" as="geometry" />
+        </mxCell>
+        <mxCell id="alert" parent="system" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;b&gt;알림 서비스&lt;/b&gt;&lt;br&gt;중복 알림 억제&lt;br&gt;심각도별 발송" vertex="1">
+          <mxGeometry height="85" width="170" x="1075" y="438" as="geometry" />
+        </mxCell>
+        <mxCell id="dashboard" parent="system" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;b&gt;대시보드&lt;/b&gt;&lt;br&gt;센서 추이&lt;br&gt;이상 이벤트 목록" vertex="1">
+          <mxGeometry height="85" width="170" x="1075" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="quality_analysis" parent="system" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;b&gt;품질 분석&lt;/b&gt;&lt;br&gt;Wafer / Lot 기준 연결&lt;br&gt;이상과 품질 결과 비교" vertex="1">
+          <mxGeometry height="85" width="230" x="440" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="external" parent="1" style="swimlane;startSize=30;fillColor=#fff0e6;strokeColor=#d79b00;fontStyle=1;html=1;" value="외부 의존성" vertex="1">
+          <mxGeometry height="430" width="220" x="1640" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="notification" parent="external" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="&lt;b&gt;메신저 / 이메일 / 문자&lt;/b&gt;&lt;br&gt;알림 채널" vertex="1">
+          <mxGeometry height="90" width="170" x="25" y="85" as="geometry" />
+        </mxCell>
+        <mxCell id="metrology" parent="external" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="&lt;b&gt;품질 검사 시스템&lt;/b&gt;&lt;br&gt;두께 / 결함 / 수율 결과" vertex="1">
+          <mxGeometry height="90" width="170" x="25" y="255" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" parent="1" style="swimlane;startSize=26;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;html=1;" value="범례" vertex="1">
+          <mxGeometry height="100" width="1180" x="40" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_actor" parent="legend" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;" value="외부 사용자/시스템" vertex="1">
+          <mxGeometry height="45" width="140" x="30" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_service" parent="legend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="서비스/처리 작업" vertex="1">
+          <mxGeometry height="45" width="140" x="210" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_gateway" parent="legend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="수집기/UI" vertex="1">
+          <mxGeometry height="45" width="140" x="390" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_storage" parent="legend" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;" value="저장소" vertex="1">
+          <mxGeometry height="60" width="130" x="570" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_topic" parent="legend" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Kafka" vertex="1">
+          <mxGeometry height="60" width="130" x="740" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_text" parent="legend" style="text;html=1;strokeColor=none;fillColor=none;fontSize=12;align=left;verticalAlign=middle;" value="실선 = 실시간 처리 흐름&#xa;점선 = 원본 보관 / 사후 분석 흐름" vertex="1">
+          <mxGeometry height="60" width="250" x="910" y="28" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="equipment" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#333333;strokeWidth=2;labelBackgroundColor=#ffffff;fontSize=11;" target="collector" value="1 센서값 / 알람 수집">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="collector" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#333333;strokeWidth=2;labelBackgroundColor=#ffffff;fontSize=11;" target="kafka" value="2 이벤트 발행">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="kafka" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#333333;strokeWidth=2;labelBackgroundColor=#ffffff;fontSize=11;" target="flink_worker_1" value="3 이벤트 소비">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="flink_logic" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#333333;strokeWidth=2;labelBackgroundColor=#ffffff;fontSize=11;" target="anomaly_topic" value="4 이상 이벤트 발행">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_timeseries" edge="1" parent="1" source="flink_logic" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#333333;strokeWidth=2;labelBackgroundColor=#ffffff;fontSize=11;" target="timeseries_db" value="5 최근 지표 저장">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_anomaly_db" edge="1" parent="1" source="anomaly_topic" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#333333;strokeWidth=2;labelBackgroundColor=#ffffff;fontSize=11;" target="anomaly_db" value="6 이상 목록 저장">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_alert" edge="1" parent="1" source="anomaly_topic" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#333333;strokeWidth=2;labelBackgroundColor=#ffffff;fontSize=11;" target="alert" value="7 알림 요청">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_alert_out" edge="1" parent="1" source="alert" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#333333;strokeWidth=2;labelBackgroundColor=#ffffff;fontSize=11;" target="notification" value="8 알림 발송">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1620" y="591" />
+              <mxPoint x="1620" y="380" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_notify_engineer" edge="1" parent="1" source="notification" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#333333;strokeWidth=2;labelBackgroundColor=#ffffff;fontSize=11;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="engineer" value="9 확인">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1850" y="380" />
+              <mxPoint x="1850" y="840" />
+              <mxPoint x="450" y="840" />
+              <mxPoint x="450" y="810" />
+              <mxPoint x="160" y="810" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_dashboard_ts" edge="1" parent="1" source="timeseries_db" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#333333;strokeWidth=2;labelBackgroundColor=#ffffff;fontSize=11;" target="dashboard" value="10 그래프 조회">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="985" y="690" />
+              <mxPoint x="1480" y="690" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_dashboard_anomaly" edge="1" parent="1" source="anomaly_db" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#333333;strokeWidth=2;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;" target="dashboard" value="11 이상 목록 조회">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1240" y="670" />
+              <mxPoint x="1480" y="670" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_engineer_dashboard" edge="1" parent="1" source="engineer" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#333333;strokeWidth=2;labelBackgroundColor=#ffffff;fontSize=11;" target="dashboard" value="12 대시보드 확인">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="600" y="707" />
+              <mxPoint x="600" y="820" />
+              <mxPoint x="1480" y="820" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_datalake" edge="1" parent="1" source="kafka" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#333333;strokeWidth=2;dashed=1;labelBackgroundColor=#ffffff;fontSize=11;" target="data_lake" value="R 원본 이벤트 보관">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_quality_raw" edge="1" parent="1" source="data_lake" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#333333;strokeWidth=2;dashed=1;labelBackgroundColor=#ffffff;fontSize=11;" target="quality_analysis" value="Q-1 원본 센서 조회">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_quality_metrology" edge="1" parent="1" source="metrology" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#333333;strokeWidth=2;dashed=1;labelBackgroundColor=#ffffff;fontSize=11;" target="quality_analysis" value="Q-2 품질 결과 도착">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="860" y="530" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
