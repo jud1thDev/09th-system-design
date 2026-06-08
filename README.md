@@ -92,6 +92,15 @@
       <br />
       <sub>스터디원</sub>
     </td>
+    <td align="center">
+      <a href="https://github.com/wsxchoi">
+        <img src="https://avatars.githubusercontent.com/wsxchoi" width="100px;" alt="최우성"/>
+        <br />
+        <sub><b>최우성</b></sub>
+      </a>
+      <br />
+      <sub>스터디원</sub>
+    </td>
   </tr>
 </table>
 
