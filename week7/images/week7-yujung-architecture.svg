@@ -1,0 +1,255 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1050" viewBox="0 0 1600 1050" role="img" aria-labelledby="title desc">
+  <title id="title">유튜브 동영상 검색 시스템 아키텍처</title>
+  <desc id="desc">동영상 업로드 이벤트가 Kafka, Indexing Pipeline, 역색인과 벡터 색인으로 흐르고, Query Service가 두 색인과 동적 속성 저장소를 읽어 하이브리드 검색 결과를 반환하는 구조. 메타 즉시 노출과 두 색인 불일치 허용을 나타낸 아키텍처 다이어그램.</desc>
+
+  <defs>
+    <style>
+      .bg { fill: #f6f7f9; }
+      .area { stroke-width: 1.5; stroke-dasharray: 7 5; }
+      .ingest { fill: #f0f5f9; stroke: #cbd5e1; }
+      .embed { fill: #fffbeb; stroke: #fde68a; }
+      .index { fill: #eff6ff; stroke: #bfdbfe; }
+      .serve { fill: #ecfdf5; stroke: #a7f3d0; }
+      .dynamic { fill: #f5f3ff; stroke: #ddd6fe; }
+      .deep { fill: #fff7ed; stroke: #fdba74; stroke-width: 1.5; }
+
+      .node { fill: #ffffff; stroke: #d7dce3; stroke-width: 1.4; filter: url(#shadow); }
+      .node-blue { fill: #eff6ff; stroke: #93c5fd; stroke-width: 1.5; filter: url(#shadow); }
+      .node-green { fill: #ecfdf5; stroke: #86efac; stroke-width: 1.5; filter: url(#shadow); }
+      .node-amber { fill: #fffbeb; stroke: #fcd34d; stroke-width: 1.5; filter: url(#shadow); }
+      .node-red { fill: #fef3f2; stroke: #fca5a5; stroke-width: 1.5; filter: url(#shadow); }
+      .node-violet { fill: #f5f3ff; stroke: #c4b5fd; stroke-width: 1.5; filter: url(#shadow); }
+
+      .title { font: 800 28px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #1f2933; }
+      .subtitle { font: 400 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #667085; }
+      .area-title { font: 800 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #1f2933; }
+      .area-sub { font: 400 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #667085; }
+      .box-title { font: 800 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #1f2933; }
+      .box-title-sm { font: 800 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #1f2933; }
+      .box-body { font: 400 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #667085; }
+      .box-body-strong { font: 700 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #475467; }
+      .box-body-warn { font: 800 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #b42318; }
+      .box-body-ok { font: 800 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #0f766e; }
+      .badge-text { font: 800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .arrow-label { font: 800 11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #475467; }
+      .arrow-label-blue { font: 800 11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #2563eb; }
+      .arrow-label-soft { font: 800 11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #98a2b3; }
+      .legend { font: 700 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #475467; }
+
+      .arrow { stroke: #475467; stroke-width: 2.2; fill: none; marker-end: url(#arrow); }
+      .arrow-soft { stroke: #98a2b3; stroke-width: 1.8; stroke-dasharray: 6 5; fill: none; marker-end: url(#arrowSoft); }
+      .arrow-blue { stroke: #2563eb; stroke-width: 2.4; fill: none; marker-end: url(#arrowBlue); }
+      .arrow-green { stroke: #0f766e; stroke-width: 2.4; fill: none; marker-end: url(#arrowGreen); }
+      .arrow-amber { stroke: #b45309; stroke-width: 2.5; fill: none; marker-end: url(#arrowAmber); }
+    </style>
+
+    <filter id="shadow" x="-12%" y="-12%" width="124%" height="124%">
+      <feDropShadow dx="0" dy="1.2" stdDeviation="1.4" flood-color="#101828" flood-opacity="0.08" />
+    </filter>
+
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475467" />
+    </marker>
+    <marker id="arrowSoft" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#98a2b3" />
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb" />
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f766e" />
+    </marker>
+    <marker id="arrowAmber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b45309" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="1050" />
+  <text class="title" x="44" y="54">유튜브 동영상 검색: 수집 → 색인 → 하이브리드 검색</text>
+  <text class="subtitle" x="44" y="82">50억 영상 · 검색 p95 300ms · 업로드 5분 노출 · 삭제 1분 제외. 핵심은 두 색인(역색인·벡터)의 불일치를 허용하며 운영하는 것.</text>
+
+  <rect class="area ingest" x="24" y="115" width="300" height="675" rx="16" />
+  <text class="area-title" x="42" y="143">Ingestion / Source</text>
+  <text class="area-sub" x="42" y="162">이벤트 수집(push) · 색인은 파생 데이터</text>
+
+  <rect class="area embed" x="350" y="115" width="290" height="675" rx="16" />
+  <text class="area-title" x="368" y="143">Embedding</text>
+  <text class="area-sub" x="368" y="162">GPU 처리량 한계 · 선별 임베딩</text>
+
+  <rect class="area index" x="666" y="115" width="300" height="675" rx="16" />
+  <text class="area-title" x="684" y="143">Search Index</text>
+  <text class="area-sub" x="684" y="162">키워드 + 의미 · 두 색인은 어긋남 허용</text>
+
+  <rect class="area serve" x="992" y="115" width="310" height="675" rx="16" />
+  <text class="area-title" x="1010" y="143">Query Serving</text>
+  <text class="area-sub" x="1010" y="162">두 경로 병렬 · RRF 융합</text>
+
+  <rect class="area dynamic" x="1328" y="115" width="248" height="675" rx="16" />
+  <text class="area-title" x="1346" y="143">Dynamic Attrs</text>
+  <text class="area-sub" x="1346" y="162">텍스트 색인과 분리</text>
+
+  <!-- ===== Column A: Ingestion / Source ===== -->
+  <rect class="node" x="45" y="190" width="250" height="100" rx="10" />
+  <rect x="62" y="207" width="64" height="20" rx="10" fill="#f2f4f7" />
+  <text class="badge-text" x="76" y="221" fill="#475467">Source</text>
+  <text class="box-title" x="62" y="249">Source of Truth</text>
+  <text class="box-body" x="62" y="268">Metadata DB · Object Storage(자막)</text>
+  <text class="box-body-strong" x="62" y="287">색인 재구축 기준(SoT)</text>
+
+  <rect class="node-blue" x="45" y="310" width="250" height="180" rx="10" />
+  <rect x="62" y="327" width="54" height="20" rx="10" fill="#dbeafe" />
+  <text class="badge-text" x="74" y="341" fill="#2563eb">Kafka</text>
+  <text class="box-title" x="62" y="369">Kafka</text>
+  <text class="box-body" x="62" y="388">video-upload · meta-change</text>
+  <text class="box-body" x="62" y="407">delete · caption-ready</text>
+  <text class="box-body" x="62" y="426">caption은 수십분 지연 도착</text>
+  <text class="box-body-strong" x="62" y="449">key = videoId (순서 보존)</text>
+  <text class="box-body-ok" x="62" y="471">consumer 장애 시 replay</text>
+
+  <rect class="node-green" x="45" y="508" width="250" height="150" rx="10" />
+  <rect x="62" y="525" width="52" height="20" rx="10" fill="#d1fae5" />
+  <text class="badge-text" x="73" y="539" fill="#0f766e">Index</text>
+  <text class="box-title" x="62" y="567">Indexing Pipeline</text>
+  <text class="box-body" x="62" y="586">메타·자막 병합 · 청킹</text>
+  <text class="box-body" x="62" y="605">키워드 / 임베딩 라우팅</text>
+  <text class="box-body-ok" x="62" y="628">메타 즉시 / 자막 후행</text>
+
+  <rect class="node" x="45" y="678" width="250" height="66" rx="10" />
+  <text class="box-title-sm" x="62" y="701">DLQ</text>
+  <text class="box-body" x="62" y="721">schema 실패 격리 · replay</text>
+
+  <path class="arrow" d="M 170 290 L 170 310" />
+  <path class="arrow-blue" d="M 170 490 L 170 508" />
+  <text class="arrow-label-blue" x="182" y="503">consume</text>
+  <path class="arrow-soft" d="M 170 658 L 170 678" />
+
+  <!-- ===== Column B: Embedding ===== -->
+  <rect class="node-amber" x="378" y="300" width="235" height="96" rx="10" />
+  <rect x="395" y="317" width="56" height="20" rx="10" fill="#fef3c7" />
+  <text class="badge-text" x="408" y="331" fill="#b45309">Queue</text>
+  <text class="box-title" x="395" y="359">Embedding Queue</text>
+  <text class="box-body" x="395" y="378">신규 · 조회수 상위 우선</text>
+
+  <rect class="node-green" x="378" y="430" width="235" height="130" rx="10" />
+  <rect x="395" y="447" width="48" height="20" rx="10" fill="#d1fae5" />
+  <text class="badge-text" x="406" y="461" fill="#0f766e">GPU</text>
+  <text class="box-title" x="395" y="489">Embedding Model</text>
+  <text class="box-body" x="395" y="508">GPU 서빙 · 처리량 한계</text>
+  <text class="box-body" x="395" y="527">선별 청크 / 메타 임베딩</text>
+  <text class="box-body-warn" x="395" y="549">유입 속도 추적 (lag)</text>
+
+  <path class="arrow-amber" d="M 295 600 L 342 600 L 342 348 L 378 348" />
+  <text class="arrow-label" x="346" y="460">임베딩 큐</text>
+  <path class="arrow-green" d="M 495 396 L 495 430" />
+
+  <!-- ===== Column C: Search Index ===== -->
+  <rect class="node-blue" x="695" y="200" width="238" height="158" rx="10" />
+  <rect x="712" y="217" width="80" height="20" rx="10" fill="#dbeafe" />
+  <text class="badge-text" x="725" y="231" fill="#2563eb">Inverted</text>
+  <text class="box-title" x="712" y="259">역색인 (Lucene)</text>
+  <text class="box-body" x="712" y="278">실시간 tier + 본 tier</text>
+  <text class="box-body" x="712" y="297">BM25 · posting list</text>
+  <text class="box-body" x="712" y="316">메타 + 자막 청크(전부)</text>
+  <text class="box-body-ok" x="712" y="338">업로드 5분 내 노출</text>
+
+  <rect class="node-violet" x="695" y="378" width="238" height="150" rx="10" />
+  <rect x="712" y="395" width="62" height="20" rx="10" fill="#ede9fe" />
+  <text class="badge-text" x="725" y="409" fill="#5b21b6">Vector</text>
+  <text class="box-title" x="712" y="437">벡터 색인</text>
+  <text class="box-body" x="712" y="456">HNSW · ANN 탐색</text>
+  <text class="box-body" x="712" y="475">선별 청크만 임베딩</text>
+  <text class="box-body" x="712" y="494">int8 / PQ 양자화</text>
+  <text class="box-body-warn" x="712" y="516">역색인보다 뒤늦음</text>
+
+  <rect class="node-red" x="695" y="548" width="238" height="110" rx="10" />
+  <rect x="712" y="565" width="58" height="20" rx="10" fill="#fee4e2" />
+  <text class="badge-text" x="724" y="579" fill="#b42318">Delete</text>
+  <text class="box-title" x="712" y="607">삭제 필터</text>
+  <text class="box-body" x="712" y="626">조회 앞단 · tombstone 무관</text>
+  <text class="box-body-ok" x="712" y="645">1분 내 결과 제외</text>
+
+  <path class="arrow-blue" d="M 295 540 L 332 540 L 332 255 L 695 255" />
+  <text class="arrow-label-blue" x="440" y="247">keyword 색인 (메타 즉시)</text>
+  <path class="arrow" d="M 613 490 L 653 490 L 653 437 L 695 437" />
+  <text class="arrow-label" x="624" y="478">vector</text>
+
+  <!-- ===== Column D: Query Serving ===== -->
+  <rect class="node" x="1020" y="185" width="250" height="84" rx="10" />
+  <rect x="1037" y="202" width="48" height="20" rx="10" fill="#f2f4f7" />
+  <text class="badge-text" x="1048" y="216" fill="#475467">User</text>
+  <text class="box-title" x="1037" y="244">검색 사용자</text>
+  <text class="box-body" x="1037" y="263">질의 입력 (exact / 묘사)</text>
+
+  <rect class="node-blue" x="1020" y="290" width="250" height="224" rx="10" />
+  <rect x="1037" y="307" width="62" height="20" rx="10" fill="#dbeafe" />
+  <text class="badge-text" x="1050" y="321" fill="#2563eb">Serving</text>
+  <text class="box-title" x="1037" y="349">Query Service</text>
+  <text class="box-body" x="1037" y="368">두 경로 병렬 retrieval</text>
+  <text class="box-body" x="1037" y="387">질의 임베딩 + 캐시</text>
+  <text class="box-body" x="1037" y="406">청크 → 영상 집계</text>
+  <text class="box-body" x="1037" y="425">RRF score fusion</text>
+  <text class="box-body-ok" x="1037" y="448">p95 300ms · hedged req</text>
+
+  <rect class="node-violet" x="1020" y="626" width="250" height="68" rx="10" />
+  <text class="box-title-sm" x="1037" y="649">질의 임베딩 GPU</text>
+  <text class="box-body" x="1037" y="669">인기 질의 캐시 hit</text>
+
+  <path class="arrow" d="M 1145 269 L 1145 290" />
+  <path class="arrow-soft" d="M 1145 514 L 1145 626" />
+  <text class="arrow-label-soft" x="1158" y="575">query embed</text>
+
+  <!-- read paths: Query Service -> index (dashed, leftward) -->
+  <path class="arrow-soft" d="M 1020 350 L 977 350 L 977 262 L 935 262" />
+  <text class="arrow-label-soft" x="980" y="318">BM25</text>
+  <path class="arrow-soft" d="M 1020 392 L 977 392 L 977 437 L 935 437" />
+  <text class="arrow-label-soft" x="980" y="415">ANN</text>
+  <path class="arrow-soft" d="M 1020 440 L 977 440 L 977 600 L 935 600" />
+  <text class="arrow-label-soft" x="980" y="540">exclude</text>
+
+  <!-- ===== Column E: Dynamic Attrs ===== -->
+  <rect class="node-green" x="1350" y="220" width="200" height="96" rx="10" />
+  <rect x="1367" y="237" width="50" height="20" rx="10" fill="#d1fae5" />
+  <text class="badge-text" x="1378" y="251" fill="#0f766e">Stats</text>
+  <text class="box-title" x="1367" y="279">Stats Aggregator</text>
+  <text class="box-body" x="1367" y="298">조회수 · 좋아요 구독</text>
+
+  <rect class="node-amber" x="1350" y="350" width="200" height="110" rx="10" />
+  <rect x="1367" y="367" width="50" height="20" rx="10" fill="#fef3c7" />
+  <text class="badge-text" x="1378" y="381" fill="#b45309">Store</text>
+  <text class="box-title" x="1367" y="409">동적 속성 Store</text>
+  <text class="box-body" x="1367" y="428">KV / doc-values</text>
+  <text class="box-body" x="1367" y="447">랭킹 boost 필드</text>
+
+  <path class="arrow-amber" d="M 1450 316 L 1450 350" />
+  <path class="arrow-soft" d="M 1270 430 L 1315 430 L 1315 405 L 1350 405" />
+  <text class="arrow-label-soft" x="1278" y="422">merge</text>
+
+  <!-- ===== Deep Dive ===== -->
+  <rect class="deep" x="44" y="825" width="1512" height="150" rx="14" />
+  <text class="area-title" x="64" y="858">Deep Dive: 단계적 색인 — 한 영상의 데이터는 한 번에 오지 않는다</text>
+  <text class="area-sub" x="64" y="880">메타가 오면 먼저 노출하고, 자막·벡터는 준비되는 대로 붙인다. 삭제는 색인 정리(merge)를 기다리지 않고 앞단 필터로 1분 내 제외한다.</text>
+
+  <rect class="node-amber" x="72" y="902" width="430" height="52" rx="10" />
+  <text class="box-title-sm" x="92" y="923">① 메타 도착 (즉시)</text>
+  <text class="box-body" x="92" y="943">키워드 색인 등록 · 5분 내 검색 노출</text>
+
+  <rect class="node-blue" x="532" y="902" width="430" height="52" rx="10" />
+  <text class="box-title-sm" x="552" y="923">② 자막 · 임베딩 (후행)</text>
+  <text class="box-body" x="552" y="943">청크 키워드 전부 + 선별 벡터 (수십분 지연)</text>
+
+  <rect class="node-red" x="992" y="902" width="430" height="52" rx="10" />
+  <text class="box-title-sm" x="1012" y="923">③ 삭제 / 비공개</text>
+  <text class="box-body" x="1012" y="943">조회 앞단 삭제 필터 → 1분 내 제외</text>
+
+  <path class="arrow-amber" d="M 502 928 L 532 928" />
+  <path class="arrow-blue" d="M 962 928 L 992 928" />
+
+  <rect x="72" y="990" width="18" height="10" rx="5" fill="#dbeafe" stroke="#93c5fd" />
+  <text class="legend" x="98" y="999">역색인 (키워드)</text>
+  <rect x="240" y="990" width="18" height="10" rx="5" fill="#f5f3ff" stroke="#c4b5fd" />
+  <text class="legend" x="266" y="999">벡터 색인 (의미)</text>
+  <rect x="400" y="990" width="18" height="10" rx="5" fill="#fef3f2" stroke="#fca5a5" />
+  <text class="legend" x="426" y="999">삭제 필터 (1분 제외)</text>
+  <rect x="572" y="990" width="18" height="10" rx="5" fill="#fffbeb" stroke="#fcd34d" />
+  <text class="legend" x="598" y="999">동적 속성 분리</text>
+</svg>
